@@ -388,6 +388,24 @@ main { min-width: 0; }
 
 .prose strong { color: white; font-weight: 700; }
 
+.prose figure { margin: 22px 0; }
+
+.prose img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.prose figcaption {
+  margin-top: 8px;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
 .prose a { color: white; }
 
 .prose ul { padding-left: 1.2em; }

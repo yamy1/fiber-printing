@@ -65,6 +65,11 @@ function parseBlocks(markdown) {
       blocks.push({ type: "hr" });
       continue;
     }
+    const image = lines.length === 1 && lines[0].match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+    if (image) {
+      blocks.push({ type: "img", alt: image[1], href: image[2] });
+      continue;
+    }
     if (lines.every((line) => line.startsWith("- "))) {
       blocks.push({
         type: "ul",
@@ -88,20 +93,34 @@ function resolvePath(base, href) {
   return decodeURIComponent(url.pathname.replace(/^\//, ""));
 }
 
+function mediaURL(base, href) {
+  if (/^(https?:|data:)/i.test(href)) return href;
+  return fileURL(resolvePath(base, href));
+}
+
+function makeImage(alt, href, base) {
+  const image = document.createElement("img");
+  image.alt = alt;
+  image.src = mediaURL(base, href);
+  return image;
+}
+
 function appendInline(parent, text, base) {
-  const pattern = /(\*\*([^*]+)\*\*)|(\[([^\]]+)\]\(([^)]+)\))/g;
+  const pattern = /(!\[([^\]]*)\]\(([^)]+)\))|(\*\*([^*]+)\*\*)|(\[([^\]]+)\]\(([^)]+)\))/g;
   let last = 0;
   let match;
   while ((match = pattern.exec(text))) {
     if (match.index > last) parent.append(document.createTextNode(text.slice(last, match.index)));
     if (match[1]) {
+      parent.append(makeImage(match[2], match[3], base));
+    } else if (match[4]) {
       const strong = document.createElement("strong");
-      strong.textContent = match[2];
+      strong.textContent = match[5];
       parent.append(strong);
     } else {
       const anchor = document.createElement("a");
-      anchor.textContent = match[4];
-      const href = match[5];
+      anchor.textContent = match[7];
+      const href = match[8];
       if (href.endsWith(".md")) {
         anchor.href = "#/" + resolvePath(base, href);
       } else {
@@ -162,6 +181,17 @@ function renderArticle(blocks, base) {
     }
     if (block.type === "hr") {
       prose.append(document.createElement("hr"));
+      continue;
+    }
+    if (block.type === "img") {
+      const figure = document.createElement("figure");
+      figure.append(makeImage(block.alt, block.href, base));
+      if (block.alt) {
+        const caption = document.createElement("figcaption");
+        caption.textContent = block.alt;
+        figure.append(caption);
+      }
+      prose.append(figure);
       continue;
     }
     if (block.type === "ul") {
