@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#050505" />
+  <title>连续纤维打印</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="app.css" />
+</head>
+<body>
+  <div class="weave" aria-hidden="true"></div>
+  <div class="clearcoat" aria-hidden="true"></div>
+  <div class="app">
+    <aside class="rail" id="rail">
+      <a class="brand" href="#/README.md">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-name">
+          <strong>连续纤维</strong>
+          <em>私人知识库</em>
+        </span>
+      </a>
+      <label class="finder">
+        <span>检索</span>
+        <input id="find" type="search" placeholder="找一篇" autocomplete="off" />
+      </label>
+      <nav id="nav" aria-label="目录"></nav>
+    </aside>
+    <div class="shade" id="shade" hidden></div>
+    <main>
+      <header class="top">
+        <button id="menu" type="button" aria-controls="rail" aria-expanded="false">目录</button>
+        <p id="crumb"></p>
+      </header>
+      <article class="sheet" id="doc"></article>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
