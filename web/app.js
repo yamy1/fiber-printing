@@ -70,6 +70,11 @@ function parseBlocks(markdown) {
       blocks.push({ type: "img", alt: image[1], href: image[2] });
       continue;
     }
+    if (lines.length >= 2 && lines.every((line) => line.trim().startsWith("|"))) {
+      const rows = lines.map(parseTableRow).filter((row) => !row.every((cell) => /^:?-+:?$/.test(cell)));
+      if (rows.length) blocks.push({ type: "table", rows });
+      continue;
+    }
     if (lines.every((line) => line.startsWith("- "))) {
       blocks.push({
         type: "ul",
@@ -80,6 +85,10 @@ function parseBlocks(markdown) {
     blocks.push({ type: "p", text: lines.join(" ") });
   }
   return blocks;
+}
+
+function parseTableRow(line) {
+  return line.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map((cell) => cell.trim());
 }
 
 function parseItem(text) {
@@ -181,6 +190,23 @@ function renderArticle(blocks, base) {
     }
     if (block.type === "hr") {
       prose.append(document.createElement("hr"));
+      continue;
+    }
+    if (block.type === "table") {
+      const wrap = document.createElement("div");
+      wrap.className = "table-wrap";
+      const table = document.createElement("table");
+      block.rows.forEach((row, index) => {
+        const tr = document.createElement("tr");
+        row.forEach((cell) => {
+          const td = document.createElement(index === 0 ? "th" : "td");
+          appendInline(td, cell, base);
+          tr.append(td);
+        });
+        table.append(tr);
+      });
+      wrap.append(table);
+      prose.append(wrap);
       continue;
     }
     if (block.type === "img") {

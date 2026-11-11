@@ -4,3 +4,5 @@
 *.pem
 *.key
 credentials.json
+.notion-import.json
+.notion/
